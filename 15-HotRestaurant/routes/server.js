@@ -1,87 +1,28 @@
-// Dependencies
-
 const express = require('express');
-const path = require('path');
 
-// Sets up the Express App
+// EXPRESS CONFIGURATION
+// This sets up the basic properties for our express server
 
+// Tells node that we are creating an "express" server
 const app = express();
-const PORT = 3000;
+
+// Sets an initial port. We"ll use this later in our listener
+const PORT = process.env.PORT || 8080;
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// ROUTER
+// The below points our server to a series of "route" files.
+// These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 
+require('./routes/apiRoutes')(app);
+require('./routes/htmlRoutes')(app);
 
-const characters = [
-  {
-    routeName: 'yoda',
-    name: 'Yoda',
-    role: 'Jedi Master',
-    age: 900,
-    forcePoints: 2000,
-  },
-  {
-    routeName: 'darthmaul',
-    name: 'Darth Maul',
-    role: 'Sith Lord',
-    age: 200,
-    forcePoints: 1200,
-  },
-  {
-    routeName: 'obiwankenobi',
-    name: 'Obi Wan Kenobi',
-    role: 'Jedi Master',
-    age: 55,
-    forcePoints: 1350,
-  },
-];
+// LISTENER
+// The below code effectively "starts" our server
 
-// Routes
-
-// Basic route that sends the user first to the AJAX Page
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'view.html')));
-
-app.get('/add', (req, res) => res.sendFile(path.join(__dirname, 'add.html')));
-
-// Displays all characters
-app.get('/api/characters', (req, res) => res.json(characters));
-
-// Displays a single character, or returns false
-app.get('/api/characters/:character', (req, res) => {
-  const chosen = req.params.character;
-
-  console.log(chosen);
-
-  /* Check each character routeName and see if the same as "chosen"
-   If the statement is true, send the character back as JSON,
-   otherwise tell the user no character was found */
-
-  for (let i = 0; i < characters.length; i++) {
-    if (chosen === characters[i].routeName) {
-      return res.json(characters[i]);
-    }
-  }
-
-  return res.json(false);
+app.listen(PORT, () => {
+  console.log(`App listening on PORT: ${PORT}`);
 });
-
-// Create New Characters - takes in JSON input
-app.post('/api/characters', (req, res) => {
-  // req.body hosts is equal to the JSON post sent from the user
-  // This works because of our body parsing middleware
-  const newCharacter = req.body;
-
-  // Using a RegEx Pattern to remove spaces from newCharacter
-  // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
-  newCharacter.routeName = newCharacter.name.replace(/\s+/g, '').toLowerCase();
-  console.log(newCharacter);
-
-  characters.push(newCharacter);
-  res.json(newCharacter);
-});
-
-// Starts the server to begin listening
-
-app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
