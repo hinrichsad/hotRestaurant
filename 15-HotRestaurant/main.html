@@ -19,7 +19,7 @@
             <span class="fa fa-plus"></span> View Tables
           </button>
         </a>
-        <a href="/api/characters">
+        <a href="/MakeRes">
           <button class="btn btn-danger btn-lg">
             <span class="fa fa-eye"></span> Make Reservations
           </button>
@@ -85,7 +85,7 @@
         // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
         searchedCharacter = searchedCharacter.replace(/\s+/g, '').toLowerCase();
 
-        fetch(`/api/characters/${searchedCharacter}`, {
+        fetch(`/MakeRes${searchedCharacter}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
