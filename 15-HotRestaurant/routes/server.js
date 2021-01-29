@@ -1,84 +1,28 @@
-// Dependencies
-
 const express = require('express');
-const path = require('path');
 
-// Sets up the Express App
+// EXPRESS CONFIGURATION
+// This sets up the basic properties for our express server
 
+// Tells node that we are creating an "express" server
 const app = express();
-const PORT = 3000;
+
+// Sets an initial port. We"ll use this later in our listener
+const PORT = process.env.PORT || 8080;
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// ROUTER
+// The below points our server to a series of "route" files.
+// These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 
+require('./routes/apiRoutes')(app);
+require('./routes/htmlRoutes')(app);
 
-const newTable = [
-  {
-    name: "Andy",
-    contact: "12345",
-    email: "hinrichsad@gmail.com",
-    uniqueId: 1,
-  },
-  {
-    name: "Chris",
-    contact: "54321",
-    email: "chris@gmail.com",
-    uniqueId: 2,
-  },
-  {
-    name: "Jeezy",
-    contact: "11111111",
-    email: "test@gmail.com",
-    uniqueId: 3,
-  },
-];
+// LISTENER
+// The below code effectively "starts" our server
 
-// Routes
-
-// Basic route that sends the user first to the AJAX Page
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'tables.html')));
-
-app.get('/add', (req, res) => res.sendFile(path.join(__dirname, 'add.html')));
-
-// Displays all characters
-app.get('/makeres', (req, res) => res.json(newTable));
-
-// Displays a single character, or returns false
-app.get('/makeres/:res', (req, res) => {
-  const rezzy = req.params.reservation;
-
-  console.log(rezzy);
-
-  /* Check each character routeName and see if the same as "chosen"
-   If the statement is true, send the character back as JSON,
-   otherwise tell the user no character was found */
-
-  for (let i = 0; i < newTable.length; i++) {
-    if (chosen === newTable[i].name) {
-      return res.json(newTable[i]);
-    }
-  }
-
-  return res.json(false);
+app.listen(PORT, () => {
+  console.log(`App listening on PORT: ${PORT}`);
 });
-
-// Create New Characters - takes in JSON input
-app.post('/makeres', (req, res) => {
-  // req.body hosts is equal to the JSON post sent from the user
-  // This works because of our body parsing middleware
-  const newTable = req.body;
-
-  // Using a RegEx Pattern to remove spaces from newCharacter
-  // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
-  newTable.name = newTable.name.replace(/\s+/g, '').toLowerCase();
-  console.log(newTable);
-
-  characters.push(newTable);
-  res.json(newTable);
-});
-
-// Starts the server to begin listening
-
-app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
